@@ -68,7 +68,7 @@
     <span class="hljs-keyword">const</span> {args} = <span class="hljs-keyword">await</span> <span class="hljs-keyword">this</span>.parse(MyCLI)
     <span class="hljs-built_in">console</span>.log(<span class="hljs-string">`running my command with args: <span class="hljs-subst">${args.firstArg}</span>, <span class="hljs-subst">${args.secondArg}</span>`</span>)
     <span class="hljs-comment">// can also get the args as an array</span>
-    <span class="hljs-keyword">const</span> {argv} = <span class="hljs-keyword">this</span>.parse(MyCLI)
+    <span class="hljs-keyword">const</span> {argv} = <span class="hljs-keyword">await</span> <span class="hljs-keyword">this</span>.parse(MyCLI)
     <span class="hljs-built_in">console</span>.log(<span class="hljs-string">`running my command with args: <span class="hljs-subst">${argv[<span class="hljs-number">0</span>]}</span>, <span class="hljs-subst">${argv[<span class="hljs-number">1</span>]}</span>`</span>)
   }
 }
