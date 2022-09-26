@@ -5,7 +5,7 @@
         <link>https://oclif.github.io/blog</link>
         <description>The best place to stay up-to-date with the latest oclif: The Open CLI Framework news and events.</description>
         <lastBuildDate>Wed, 12 Jan 2022 06:00:00 GMT</lastBuildDate>
-        <docs>http://blogs.law.harvard.edu/tech/rss</docs>
+        <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
         <generator>https://github.com/jpmonette/feed</generator>
         <image>
             <title>oclif: The Open CLI Framework Blog</title>
