@@ -60,7 +60,7 @@
 <span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MyCommand</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Command</span> </span>{
   <span class="hljs-keyword">static</span> description = <span class="hljs-string">'description of this example command'</span>
 
-  <span class="hljs-keyword">async</span> run() {
+  <span class="hljs-keyword">async</span> run(): <span class="hljs-built_in">Promise</span>&lt;<span class="hljs-keyword">void</span>&gt; {
     <span class="hljs-built_in">console</span>.log(<span class="hljs-string">'running my command'</span>)
   }
 }
