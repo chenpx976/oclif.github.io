@@ -59,9 +59,11 @@
 <p>A basic hook looks like the following in TypeScript:</p>
 <pre><code class="hljs css language-typescript"><span class="hljs-keyword">import</span> {Hook} <span class="hljs-keyword">from</span> <span class="hljs-string">'@oclif/core'</span>
 
-<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-keyword">const</span> hook: Hook&lt;<span class="hljs-string">'init'</span>&gt; = <span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">options</span>) </span>{
+<span class="hljs-keyword">const</span> hook: Hook&lt;<span class="hljs-string">'init'</span>&gt; = <span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">options</span>) </span>{
   <span class="hljs-built_in">console</span>.log(<span class="hljs-string">`example init hook running before <span class="hljs-subst">${options.id}</span>`</span>)
 }
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> hook
 </code></pre>
 <p>The hook must also be declared with the event's name and hook's file path under oclif's settings in <code>package.json</code>:</p>
 <pre><code class="hljs css language-js">  <span class="hljs-string">"oclif"</span>: {
@@ -94,9 +96,11 @@
 <p>Custom events are just like lifecycle events, but you need to call <code>this.config.runHook()</code> to fire the event.</p>
 <p>For example, you could define an analytics post function that you will run in your command after submitting analytics telemetry. First define:</p>
 <p><strong>src/hooks/analytics/post.ts</strong></p>
-<pre><code class="hljs css language-typescript"><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> <span class="hljs-keyword">const</span> hook = <span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">options: {id: <span class="hljs-built_in">string</span>}</span>) </span>{
+<pre><code class="hljs css language-typescript"><span class="hljs-keyword">const</span> hook = <span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">options: {id: <span class="hljs-built_in">string</span>}</span>) </span>{
   <span class="hljs-comment">// code to post options.id to analytics server</span>
 }
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> hook
 </code></pre>
 <p><strong>package.json</strong></p>
 <pre><code class="hljs css language-js">  <span class="hljs-string">"oclif"</span>: {
