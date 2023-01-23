@@ -66,15 +66,16 @@
   error = <span class="hljs-string">'error'</span>,
 }
 
-<span class="hljs-keyword">export</span> <span class="hljs-keyword">type</span> Flags&lt;T <span class="hljs-keyword">extends</span> <span class="hljs-keyword">typeof</span> Command&gt; = Interfaces.InferredFlags&lt;<span class="hljs-keyword">typeof</span> BaseCommand[<span class="hljs-string">'globalFlags'</span>] &amp; T[<span class="hljs-string">'flags'</span>]&gt;
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">type</span> Flags&lt;T <span class="hljs-keyword">extends</span> <span class="hljs-keyword">typeof</span> Command&gt; = Interfaces.InferredFlags&lt;<span class="hljs-keyword">typeof</span> BaseCommand[<span class="hljs-string">'baseFlags'</span>] &amp; T[<span class="hljs-string">'flags'</span>]&gt;
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">type</span> Args&lt;T <span class="hljs-keyword">extends</span> <span class="hljs-keyword">typeof</span> Command&gt; = Interfaces.InferredArgs&lt;T[<span class="hljs-string">'args'</span>]&gt;
 
 <span class="hljs-keyword">export</span> <span class="hljs-keyword">abstract</span> <span class="hljs-keyword">class</span> BaseCommand&lt;T <span class="hljs-keyword">extends</span> <span class="hljs-keyword">typeof</span> Command&gt; <span class="hljs-keyword">extends</span> Command {
   <span class="hljs-comment">// add the --json flag</span>
   <span class="hljs-keyword">static</span> enableJsonFlag = <span class="hljs-literal">true</span>
 
   <span class="hljs-comment">// define flags that can be inherited by any command that extends BaseCommand</span>
-  <span class="hljs-keyword">static</span> globalFlags = {
-    <span class="hljs-string">'log-level'</span>: Flags.enum&lt;LogLevel&gt;({
+  <span class="hljs-keyword">static</span> baseFlags = {
+    <span class="hljs-string">'log-level'</span>: Flags.custom&lt;LogLevel&gt;({
       summary: <span class="hljs-string">'Specify level for logging.'</span>,
       options: <span class="hljs-built_in">Object</span>.values(LogLevel),
       helpGroup: <span class="hljs-string">'GLOBAL'</span>,
@@ -82,14 +83,21 @@
   }
 
   <span class="hljs-keyword">protected</span> flags!: Flags&lt;T&gt;
+  <span class="hljs-keyword">protected</span> args!: Args&lt;T&gt;
 
   <span class="hljs-keyword">public</span> <span class="hljs-keyword">async</span> init(): <span class="hljs-built_in">Promise</span>&lt;<span class="hljs-built_in">void</span>&gt; {
     <span class="hljs-keyword">await</span> <span class="hljs-keyword">super</span>.init()
-    <span class="hljs-keyword">const</span> {flags} = <span class="hljs-keyword">await</span> <span class="hljs-keyword">this</span>.parse(<span class="hljs-keyword">this</span>.<span class="hljs-keyword">constructor</span> as Interfaces.Command.Class)
-    this.flags = flags
+        <span class="hljs-keyword">const</span> {args, flags} = <span class="hljs-keyword">await</span> <span class="hljs-keyword">this</span>.parse({
+      flags: <span class="hljs-keyword">this</span>.ctor.flags,
+      baseFlags: (<span class="hljs-keyword">super</span>.ctor <span class="hljs-keyword">as</span> <span class="hljs-keyword">typeof</span> BaseCommand).baseFlags,
+      args: <span class="hljs-keyword">this</span>.ctor.args,
+      strict: <span class="hljs-keyword">this</span>.ctor.strict,
+    })
+    <span class="hljs-keyword">this</span>.flags = flags <span class="hljs-keyword">as</span> Flags&lt;T&gt;
+    <span class="hljs-keyword">this</span>.args = args <span class="hljs-keyword">as</span> Args&lt;T&gt;
   }
 
-  protected async catch(<span class="hljs-params">err: <span class="hljs-built_in">Error</span> &amp; {exitCode?: <span class="hljs-built_in">number</span>}</span>): Promise&lt;any&gt; {
+  <span class="hljs-keyword">protected</span> <span class="hljs-keyword">async</span> <span class="hljs-keyword">catch</span>(err: <span class="hljs-built_in">Error</span> &amp; {exitCode?: <span class="hljs-built_in">number</span>}): <span class="hljs-built_in">Promise</span>&lt;<span class="hljs-built_in">any</span>&gt; {
     <span class="hljs-comment">// add any custom logic to handle errors from the command</span>
     <span class="hljs-comment">// or simply return the parent class error handling</span>
     <span class="hljs-keyword">return</span> <span class="hljs-keyword">super</span>.catch(err)
@@ -130,7 +138,7 @@
 }
 </code></pre>
 <p>For a more complex example, <a href="https://github.com/salesforcecli/sf-plugins-core/blob/main/src/sfCommand.ts">here's</a> how we do this for the Salesforce CLI.</p>
-</span></div></article></div><div class="docLastUpdate"><em>Last updated on 11/16/2022</em></div><div class="docs-prevnext"><a class="docs-prev button" href="/docs/aliases"><span class="arrow-prev">← </span><span>Aliases</span></a><a class="docs-next button" href="/docs/prompting"><span>Prompting</span><span class="arrow-next"> →</span></a></div></div></div></div><footer class="footer pb3"><div class="mw6 center tc dark-gray f6 bt b--lighter-gray pt3">Made with 💜 by <a class="blue" href="https://developer.salesforce.com/home">Salesforce</a> — <a class="blue" href="https://github.com/oclif/oclif/blob/main/LICENSE">MIT License</a></div></footer></div><script type="text/javascript" src="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.js"></script><script>
+</span></div></article></div><div class="docLastUpdate"><em>Last updated on 1/23/2023</em></div><div class="docs-prevnext"><a class="docs-prev button" href="/docs/aliases"><span class="arrow-prev">← </span><span>Aliases</span></a><a class="docs-next button" href="/docs/prompting"><span>Prompting</span><span class="arrow-next"> →</span></a></div></div></div></div><footer class="footer pb3"><div class="mw6 center tc dark-gray f6 bt b--lighter-gray pt3">Made with 💜 by <a class="blue" href="https://developer.salesforce.com/home">Salesforce</a> — <a class="blue" href="https://github.com/oclif/oclif/blob/main/LICENSE">MIT License</a></div></footer></div><script type="text/javascript" src="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.js"></script><script>
                 document.addEventListener('keyup', function(e) {
                   if (e.target !== document.body) {
                     return;

@@ -55,39 +55,51 @@
               }
             });
         </script></nav></div><div class="container mainContainer docsContainer"><div class="wrapper"><div class="post"><header class="postHeader"><a class="edit-page-link button" href="https://github.com/oclif/oclif.github.io/tree/docs/docs/args.md" target="_blank" rel="noreferrer noopener">Edit</a><h1 id="__docusaurus" class="postHeaderTitle">Command Arguments</h1></header><article><div><span><p>Arguments are positional arguments passed to the command. For example, if this command was run with <code>mycli arg1 arg2</code> it would be declared like this:</p>
-<pre><code class="hljs css language-js"><span class="hljs-keyword">import</span> {Command} <span class="hljs-keyword">from</span> <span class="hljs-string">'@oclif/core'</span>
+<pre><code class="hljs css language-typescript"><span class="hljs-keyword">import</span> {Args, Command} <span class="hljs-keyword">from</span> <span class="hljs-string">'@oclif/core'</span>
 
-<span class="hljs-keyword">export</span> <span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">MyCLI</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">Command</span> </span>{
-  <span class="hljs-keyword">static</span> args = [
-    {<span class="hljs-attr">name</span>: <span class="hljs-string">'firstArg'</span>},
-    {<span class="hljs-attr">name</span>: <span class="hljs-string">'secondArg'</span>},
-  ]
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">class</span> MyCLI <span class="hljs-keyword">extends</span> Command {
+  <span class="hljs-keyword">static</span> args = {
+    firstArg: Args.string(),
+    secondArg: Args.string(),
+  }
 
   <span class="hljs-keyword">async</span> run() {
     <span class="hljs-comment">// can get args as an object</span>
     <span class="hljs-keyword">const</span> {args} = <span class="hljs-keyword">await</span> <span class="hljs-keyword">this</span>.parse(MyCLI)
-    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">`running my command with args: <span class="hljs-subst">${args.firstArg}</span>, <span class="hljs-subst">${args.secondArg}</span>`</span>)
+    <span class="hljs-keyword">this</span>.log(<span class="hljs-string">`running my command with args: <span class="hljs-subst">${args.firstArg}</span>, <span class="hljs-subst">${args.secondArg}</span>`</span>)
     <span class="hljs-comment">// can also get the args as an array</span>
     <span class="hljs-keyword">const</span> {argv} = <span class="hljs-keyword">await</span> <span class="hljs-keyword">this</span>.parse(MyCLI)
-    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">`running my command with args: <span class="hljs-subst">${argv[<span class="hljs-number">0</span>]}</span>, <span class="hljs-subst">${argv[<span class="hljs-number">1</span>]}</span>`</span>)
+    <span class="hljs-keyword">this</span>.log(<span class="hljs-string">`running my command with args: <span class="hljs-subst">${argv[<span class="hljs-number">0</span>]}</span>, <span class="hljs-subst">${argv[<span class="hljs-number">1</span>]}</span>`</span>)
   }
 }
 </code></pre>
 <p>Here are the options arguments can have:</p>
-<pre><code class="hljs css language-js"><span class="hljs-keyword">static</span> args = [
-  {
-    <span class="hljs-attr">name</span>: <span class="hljs-string">'file'</span>,               <span class="hljs-comment">// name of arg to show in help and reference with args[name]</span>
-    <span class="hljs-attr">required</span>: <span class="hljs-literal">false</span>,            <span class="hljs-comment">// make the arg required with `required: true`</span>
-    <span class="hljs-attr">description</span>: <span class="hljs-string">'output file'</span>, <span class="hljs-comment">// help description</span>
-    <span class="hljs-attr">hidden</span>: <span class="hljs-literal">true</span>,               <span class="hljs-comment">// hide this arg from help</span>
-    <span class="hljs-attr">parse</span>: <span class="hljs-function"><span class="hljs-params">input</span> =&gt;</span> <span class="hljs-string">'output'</span>,   <span class="hljs-comment">// instead of the user input, return a different value</span>
-    <span class="hljs-attr">default</span>: <span class="hljs-string">'world'</span>,           <span class="hljs-comment">// default value if no arg input</span>
-    <span class="hljs-attr">options</span>: [<span class="hljs-string">'a'</span>, <span class="hljs-string">'b'</span>],        <span class="hljs-comment">// only allow input to be from a discrete set</span>
-  }
-]
+<pre><code class="hljs css language-js"><span class="hljs-keyword">static</span> args = {
+  <span class="hljs-attr">firstArg</span>: Args.string(
+    {
+      <span class="hljs-attr">name</span>: <span class="hljs-string">'file'</span>,               <span class="hljs-comment">// name of arg to show in help and reference with args[name]</span>
+      <span class="hljs-attr">required</span>: <span class="hljs-literal">false</span>,            <span class="hljs-comment">// make the arg required with `required: true`</span>
+      <span class="hljs-attr">description</span>: <span class="hljs-string">'output file'</span>, <span class="hljs-comment">// help description</span>
+      <span class="hljs-attr">hidden</span>: <span class="hljs-literal">true</span>,               <span class="hljs-comment">// hide this arg from help</span>
+      <span class="hljs-attr">parse</span>: <span class="hljs-function"><span class="hljs-params">input</span> =&gt;</span> <span class="hljs-string">'output'</span>,   <span class="hljs-comment">// instead of the user input, return a different value</span>
+      <span class="hljs-attr">default</span>: <span class="hljs-string">'world'</span>,           <span class="hljs-comment">// default value if no arg input</span>
+      <span class="hljs-attr">options</span>: [<span class="hljs-string">'a'</span>, <span class="hljs-string">'b'</span>],        <span class="hljs-comment">// only allow input to be from a discrete set</span>
+    }
+  ),
+}
 </code></pre>
+<p>Here are the types of args that <code>Args</code> exports:</p>
+<ul>
+<li>string</li>
+<li>integer</li>
+<li>boolean</li>
+<li>url</li>
+<li>file</li>
+<li>directory</li>
+<li>custom</li>
+</ul>
 <p>For variable length arguments, disable argument validation with <code>static strict = false</code> on the command.</p>
-</span></div></article></div><div class="docLastUpdate"><em>Last updated on 11/16/2022</em></div><div class="docs-prevnext"><a class="docs-prev button" href="/docs/commands"><span class="arrow-prev">← </span><span>Commands</span></a><a class="docs-next button" href="/docs/flags"><span>Command Flags</span><span class="arrow-next"> →</span></a></div></div></div></div><footer class="footer pb3"><div class="mw6 center tc dark-gray f6 bt b--lighter-gray pt3">Made with 💜 by <a class="blue" href="https://developer.salesforce.com/home">Salesforce</a> — <a class="blue" href="https://github.com/oclif/oclif/blob/main/LICENSE">MIT License</a></div></footer></div><script type="text/javascript" src="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.js"></script><script>
+</span></div></article></div><div class="docLastUpdate"><em>Last updated on 1/23/2023</em></div><div class="docs-prevnext"><a class="docs-prev button" href="/docs/commands"><span class="arrow-prev">← </span><span>Commands</span></a><a class="docs-next button" href="/docs/flags"><span>Command Flags</span><span class="arrow-next"> →</span></a></div></div></div></div><footer class="footer pb3"><div class="mw6 center tc dark-gray f6 bt b--lighter-gray pt3">Made with 💜 by <a class="blue" href="https://developer.salesforce.com/home">Salesforce</a> — <a class="blue" href="https://github.com/oclif/oclif/blob/main/LICENSE">MIT License</a></div></footer></div><script type="text/javascript" src="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.js"></script><script>
                 document.addEventListener('keyup', function(e) {
                   if (e.target !== document.body) {
                     return;

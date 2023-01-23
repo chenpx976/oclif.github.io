@@ -109,7 +109,40 @@ oclif
 .then(oclif.flush)
 .catch(oclif.Errors.handle)
 </code></pre>
-</span></div></article></div><div class="docLastUpdate"><em>Last updated on 11/16/2022</em></div><div class="docs-prevnext"><a class="docs-prev button" href="/docs/single_command_cli"><span class="arrow-prev">← </span><span>Single Command CLI</span></a><a class="docs-next button" href="/docs/examples"><span>Examples</span><span class="arrow-next"> →</span></a></div></div></div></div><footer class="footer pb3"><div class="mw6 center tc dark-gray f6 bt b--lighter-gray pt3">Made with 💜 by <a class="blue" href="https://developer.salesforce.com/home">Salesforce</a> — <a class="blue" href="https://github.com/oclif/oclif/blob/main/LICENSE">MIT License</a></div></footer></div><script type="text/javascript" src="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.js"></script><script>
+<p>Alternatively, you can use the <code>execute</code> function to abstract out the bin scripts. You will still need to modify your tsconfig.json as documented above.</p>
+<p>Example for ESM dev.js</p>
+<pre><code class="hljs css language-js"><span class="hljs-meta">#!/usr/bin/env ts-node</span>
+<span class="hljs-comment">// eslint-disable-next-line node/shebang</span>
+(<span class="hljs-keyword">async</span> () =&gt; {
+  <span class="hljs-keyword">const</span> oclif = <span class="hljs-keyword">await</span> <span class="hljs-keyword">import</span>(<span class="hljs-string">'@oclif/core'</span>)
+  <span class="hljs-keyword">await</span> oclif.execute({<span class="hljs-attr">type</span>: <span class="hljs-string">'esm'</span>, <span class="hljs-attr">development</span>: <span class="hljs-literal">true</span>, <span class="hljs-attr">dir</span>: <span class="hljs-keyword">import</span>.meta.url})
+})()
+</code></pre>
+<p>Example for ESM run.js</p>
+<pre><code class="hljs css language-js"><span class="hljs-meta">#!/usr/bin/env node</span>
+<span class="hljs-comment">// eslint-disable-next-line node/shebang</span>
+(<span class="hljs-keyword">async</span> () =&gt; {
+  <span class="hljs-keyword">const</span> oclif = <span class="hljs-keyword">await</span> <span class="hljs-keyword">import</span>(<span class="hljs-string">'@oclif/core'</span>)
+  <span class="hljs-keyword">await</span> oclif.execute({<span class="hljs-attr">type</span>: <span class="hljs-string">'esm'</span>, <span class="hljs-attr">dir</span>: <span class="hljs-keyword">import</span>.meta.url})
+})()
+</code></pre>
+<p>Example for CJS dev.js</p>
+<pre><code class="hljs css language-js"><span class="hljs-meta">#!/usr/bin/env node</span>
+<span class="hljs-comment">// eslint-disable-next-line node/shebang</span>
+(<span class="hljs-keyword">async</span> () =&gt; {
+  <span class="hljs-keyword">const</span> oclif = <span class="hljs-keyword">await</span> <span class="hljs-keyword">import</span>(<span class="hljs-string">'@oclif/core'</span>)
+  <span class="hljs-keyword">await</span> oclif.execute({<span class="hljs-attr">type</span>: <span class="hljs-string">'cjs'</span>, <span class="hljs-attr">development</span>: <span class="hljs-literal">true</span>, <span class="hljs-attr">dir</span>: __dirname})
+})()
+</code></pre>
+<p>Example for CJS run.js</p>
+<pre><code class="hljs css language-js"><span class="hljs-meta">#!/usr/bin/env node</span>
+<span class="hljs-comment">// eslint-disable-next-line node/shebang</span>
+(<span class="hljs-keyword">async</span> () =&gt; {
+  <span class="hljs-keyword">const</span> oclif = <span class="hljs-keyword">await</span> <span class="hljs-keyword">import</span>(<span class="hljs-string">'@oclif/core'</span>)
+  <span class="hljs-keyword">await</span> oclif.execute({<span class="hljs-attr">type</span>: <span class="hljs-string">'cjs'</span>, <span class="hljs-attr">dir</span>: <span class="hljs-keyword">import</span>.meta.url})
+})()
+</code></pre>
+</span></div></article></div><div class="docLastUpdate"><em>Last updated on 1/23/2023</em></div><div class="docs-prevnext"><a class="docs-prev button" href="/docs/single_command_cli"><span class="arrow-prev">← </span><span>Single Command CLI</span></a><a class="docs-next button" href="/docs/examples"><span>Examples</span><span class="arrow-next"> →</span></a></div></div></div></div><footer class="footer pb3"><div class="mw6 center tc dark-gray f6 bt b--lighter-gray pt3">Made with 💜 by <a class="blue" href="https://developer.salesforce.com/home">Salesforce</a> — <a class="blue" href="https://github.com/oclif/oclif/blob/main/LICENSE">MIT License</a></div></footer></div><script type="text/javascript" src="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.js"></script><script>
                 document.addEventListener('keyup', function(e) {
                   if (e.target !== document.body) {
                     return;
