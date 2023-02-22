@@ -1,0 +1,54 @@
+<!DOCTYPE html><html lang="en"><head><meta charSet="utf-8"/><meta http-equiv="X-UA-Compatible" content="IE=edge"/><title>Just-in-Time Plugin Installation · oclif: The Open CLI Framework</title><meta name="viewport" content="width=device-width, initial-scale=1.0"/><meta name="generator" content="Docusaurus"/><meta name="description" content="Sometimes you might want to have a plugin that isn&#x27;t bundled in your CLI but gets installed the first time it&#x27;s executed by the user - we call this just-in-time plugin installation, or JIT for short. This can be useful if you need to reduce the package size of your CLI while still allowing users access to all the plugins."/><meta name="docsearch:language" content="en"/><meta property="og:title" content="Just-in-Time Plugin Installation · oclif: The Open CLI Framework"/><meta property="og:type" content="website"/><meta property="og:url" content="https://oclif.github.io/"/><meta property="og:description" content="Sometimes you might want to have a plugin that isn&#x27;t bundled in your CLI but gets installed the first time it&#x27;s executed by the user - we call this just-in-time plugin installation, or JIT for short. This can be useful if you need to reduce the package size of your CLI while still allowing users access to all the plugins."/><meta name="twitter:card" content="summary"/><link rel="shortcut icon" href="/img/favicon.png"/><link rel="stylesheet" href="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.css"/><link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css"/><link rel="alternate" type="application/atom+xml" href="https://oclif.github.io/blog/atom.xml" title="oclif: The Open CLI Framework Blog ATOM Feed"/><link rel="alternate" type="application/rss+xml" href="https://oclif.github.io/blog/feed.xml" title="oclif: The Open CLI Framework Blog RSS Feed"/><link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,700|Roboto+Mono"/><script type="text/javascript" src="https://buttons.github.io/buttons.js"></script><script src="/js/scrollSpy.js"></script><link rel="stylesheet" href="/css/main.css"/><script src="/js/codetabs.js"></script></head><body class="sideNavVisible"><div class="fixedHeaderContainer"><div class="headerWrapper wrapper"><header><a href="/"><img class="logo" src="/img/oclif_rev.svg" alt="oclif: The Open CLI Framework"/></a><div class="navigationWrapper navigationSlider"><nav class="slidingNav"><ul class="nav-site nav-site-internal"><li class=""><a href="/docs/introduction" target="_self">Getting Started</a></li><li class=""><a href="/docs/commands" target="_self">API Reference</a></li><li class=""><a href="/blog/" target="_self">Blog</a></li><li class=""><a href="https://github.com/oclif/oclif" target="_self">GitHub</a></li><li class="navSearchWrapper reactNavSearchWrapper"><input type="text" id="search_input_react" placeholder="Search" title="Search"/></li></ul></nav></div></header></div></div><div class="navPusher"><div class="docMainWrapper wrapper"><div class="container mainContainer docsContainer"><div class="wrapper"><div class="post"><header class="postHeader"><a class="edit-page-link button" href="https://github.com/oclif/oclif.github.io/tree/docs/docs/jit_plugins.md" target="_blank" rel="noreferrer noopener">Edit</a><h1 id="__docusaurus" class="postHeaderTitle">Just-in-Time Plugin Installation</h1></header><article><div><span><p>Sometimes you might want to have a plugin that isn't bundled in your CLI but gets installed the first time it's executed by the user - we call this just-in-time plugin installation, or JIT for short. This can be useful if you need to reduce the package size of your CLI while still allowing users access to all the plugins.</p>
+<p>To use this feature you need to:</p>
+<ol>
+<li>Add <code>jitPlugins</code> to the <code>oclif</code> section of your package.json</li>
+</ol>
+<pre><code class="hljs css language-json">"oclif": {
+  "jitPlugins": {
+    "my-plugin": "^1.2.3",
+    "another-plugin": "^1.2.3",
+  }
+}
+</code></pre>
+<ol start="2">
+<li><p>Ensure that your build process includes generating a manifest using <code>oclif manifest</code>. The manifest will include the information about all the commands owned by JIT plugins which allows users to run <code>--help</code> on those commands without having them installed yet. <strong>If the generated manifest doesn't get packed with your CLI, then the feature will not work.</strong></p></li>
+<li><p>Implement the <code>jit_plugin_not_installed</code> hook.</p></li>
+</ol>
+<p><code>@oclif/core</code> attempts to be UX-agnostic, meaning that we don't want to impose any particular user experience on you. Any time a user experience is required we utilize hooks so that you can design the exact user experience you want your users to have.</p>
+<p>In the case of JIT plugin installation, there are many possible user experiences that you might want - maybe you want to prompt the user for confirmation first, or maybe you want to log a specific message, etc...</p>
+<p>Here's an example of how you might implement the hook,</p>
+<pre><code class="hljs css language-typescript"><span class="hljs-keyword">import</span> { Hook, CLIError, ux } <span class="hljs-keyword">from</span> <span class="hljs-string">'@oclif/core'</span>;
+
+<span class="hljs-keyword">const</span> hook: Hook&lt;<span class="hljs-string">'jit_plugin_not_installed'</span>&gt; = <span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">opts</span>) </span>{
+  <span class="hljs-keyword">try</span> {
+    <span class="hljs-keyword">const</span> answer = <span class="hljs-keyword">await</span> ux.confirm(<span class="hljs-string">`<span class="hljs-subst">${opts.command.pluginName}</span> not installed. Would you like to install?`</span>)
+    <span class="hljs-keyword">if</span> (answer === <span class="hljs-string">'y'</span>) {
+      <span class="hljs-keyword">await</span> opts.config.runCommand(<span class="hljs-string">'plugins:install'</span>, [<span class="hljs-string">`<span class="hljs-subst">${opts.command.pluginName}</span>@<span class="hljs-subst">${opts.pluginVersion}</span>`</span>]);
+    }
+  } <span class="hljs-keyword">catch</span> (error) {
+    <span class="hljs-keyword">throw</span> <span class="hljs-keyword">new</span> CLIError(<span class="hljs-string">`Could not install <span class="hljs-subst">${opts.command.pluginName}</span>`</span>, <span class="hljs-string">'JitPluginInstallError'</span>);
+  }
+};
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> hook;
+
+</code></pre>
+</span></div></article></div><div class="docLastUpdate"><em>Last updated on 2/22/2023</em></div><div class="docs-prevnext"></div></div></div></div><footer class="footer pb3"><div class="mw6 center tc dark-gray f6 bt b--lighter-gray pt3">Made with 💜 by <a class="blue" href="https://developer.salesforce.com/home">Salesforce</a> — <a class="blue" href="https://github.com/oclif/oclif/blob/main/LICENSE">MIT License</a></div></footer></div><script type="text/javascript" src="https://cdn.jsdelivr.net/docsearch.js/1/docsearch.min.js"></script><script>
+                document.addEventListener('keyup', function(e) {
+                  if (e.target !== document.body) {
+                    return;
+                  }
+                  // keyCode for '/' (slash)
+                  if (e.keyCode === 191) {
+                    const search = document.getElementById('search_input_react');
+                    search && search.focus();
+                  }
+                });
+              </script><script>
+              var search = docsearch({
+                
+                apiKey: '433a7758541da1949f63b813ddf5c78c',
+                indexName: 'oclif',
+                inputSelector: '#search_input_react'
+              });
+            </script></body></html>
